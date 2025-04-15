@@ -9,7 +9,7 @@ def connetti_db():
         host="localhost",
         user="root",
         password="",
-        database="esercito"
+        database="Teatro"
     )
         if conn.is_connected():
             print("✅ Connessione al database riuscita.")
@@ -82,7 +82,7 @@ def posti_disponibili_vip(conn):
         SELECT COUNT(*) FROM Postivip WHERE occupato = FALSE
     """)
     risultato = cursor.fetchone()
-    print(f"🎟️ Posti plebe disponibili: {risultato[0]}")
+    print(f"🎟️ Posti vip disponibili: {risultato[0]}")
     cursor.close()
 
 # === FUNZIONE PER PRENOTARE UN POSTO PLEBE ===
@@ -229,55 +229,10 @@ def prenota_servizio_vip(conn, id_posto, servizio):
 
 conn=  connetti_db()
 
-def menu(conn):
-    while True:
-        print("\n--- MENU ---")
-        print("1. Visualizza posti disponibili plebe")
-        print("2. Visualizza posti disponibili VIP")
-        print("3. Prenota posto plebe")
-        print("4. Prenota posto VIP")
-        print("5. Cancella prenotazione posto plebe")
-        print("6. Cancella prenotazione posto VIP")
-        print("7. Verifica stato di un servizio VIP")
-        print("8. Prenota un servizio VIP")
-        print("9. Esci")
 
-        scelta = input("Scegli un'opzione: ")
-
-        match scelta:
-            case "1":
-                posti_disponibili_plebe(conn)
-
-            case "2":
-                posti_disponibili_vip(conn)
-
-            case "3":
-                prenota_posto_plebe(conn)
-
-            case "4":
-                prenota_posto_vip(conn)
-
-            case "5":
-                id_posto = int(input("Inserisci l'ID del posto plebe da cancellare: "))
-                cancella_prenotazione_plebe(conn, id_posto)
-
-            case "6":
-                id_posto = int(input("Inserisci l'ID del posto VIP da cancellare: "))
-                cancella_prenotazione_vip(conn, id_posto)
-
-            case "7":
-                servizio = input("Inserisci il servizio da verificare (accesso_lounge, servizio_in_posto, regalo_benvenuto): ")
-                verifica_servizio_vip(conn, servizio)
-
-            case "8":
-                id_posto = int(input("Inserisci l'ID del posto VIP per prenotare il servizio: "))
-                servizio = input("Inserisci il servizio da prenotare (accesso_lounge, servizio_in_posto, regalo_benvenuto): ")
-                prenota_servizio_vip(conn, id_posto, servizio)
-
-            case "9":
-                print("Arrivederci!")
-                break
-
-            case _:
-                print("❌ Opzione non valida. Riprova.")
+                    
+conn=  connetti_db()
+teatro = Teatro(conn)
+teatro.menu()
+conn.close()
 
