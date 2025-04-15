@@ -126,3 +126,88 @@ class PostoPlebe(Posto):
             db.cancella_prenotazione_plebe(conn,self.get_numero())
         else:
             print("Il posto era già libero")
+
+class Teatro:
+    def menu(self):
+        while True:
+            print("\n🎭 MENU TEATRO")
+            print("1. Visualizza posti plebe disponibili")
+            print("2. Visualizza posti VIP disponibili")
+            print("3. Prenota posto plebe")
+            print("4. Prenota posto VIP")
+            print("5. Cancella prenotazione plebe")
+            print("6. Cancella prenotazione VIP")
+            print("7. Verifica stato servizio VIP")
+            print("8. Prenota servizio VIP")
+            print("9. Esci")
+
+            scelta = input("Seleziona un'opzione: ")
+
+            match scelta:
+                case "1":
+                    db.posti_disponibili_plebe(conn)
+
+                case "2":
+                    db.posti_disponibili_vip(conn)
+
+                case "3":
+                    try:
+                        id_posto = int(input("Inserisci numero del posto plebe da prenotare (1-300): "))
+                        fila = input("Inserisci fila: ")
+                        posto = PostoPlebe(id_posto, fila)
+                        posto.prenota()
+                    except ValueError:
+                        print("❌ Inserisci un numero valido.")
+
+                case "4":
+                    try:
+                        id_posto = int(input("Inserisci numero del posto VIP da prenotare: "))
+                        fila = input("Inserisci fila: ")
+                        posto = PostoVip(id_posto, fila)
+                        posto.prenota()
+                    except ValueError:
+                        print("❌ Inserisci un numero valido.")
+
+                case "5":
+                    try:
+                        id_posto = int(input("Inserisci numero del posto plebe da cancellare: "))
+                        fila = input("Inserisci fila: ")
+                        posto = PostoPlebe(id_posto, fila, occupato=True)
+                        posto.libera()
+                    except ValueError:
+                        print("❌ Inserisci un numero valido.")
+
+                case "6":
+                    try:
+                        id_posto = int(input("Inserisci numero del posto VIP da cancellare: "))
+                        fila = input("Inserisci fila: ")
+                        posto = PostoVip(id_posto, fila, occupato=True)
+                        posto.libera()
+                    except ValueError:
+                        print("❌ Inserisci un numero valido.")
+
+                case "7":
+                    try:
+                        servizio = input("Inserisci servizio (acesso_loung, servizio_in_posto, regalo_benvenuto): ").strip()
+                        db.verifica_servizio_vip(conn, servizio)
+                    except Exception as e:
+                        print("Errore nella verifica del servizio:", e)
+
+                case "8":
+                    try:
+                        id_posto = int(input("Inserisci numero del posto VIP: "))
+                        servizio = input("Inserisci servizio da prenotare (acesso_loung, servizio_in_posto, regalo_benvenuto): ").strip()
+                        db.prenota_servizio_vip(conn, id_posto, servizio)
+                        print("✅ Servizio prenotato.")
+                    except ValueError:
+                        print("❌ Inserisci un numero valido.")
+
+                case "9":
+                    print("👋 Uscita dal programma.")
+                    break
+
+                case _:
+                    print("❌ Scelta non valida. Riprova.")
+
+teatro = Teatro()
+teatro.menu()
