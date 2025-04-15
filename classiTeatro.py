@@ -53,6 +53,7 @@ class PostoVip(Posto):
             costa = 50.0
             self.set_occupato(True) 
             print("Posto prenotato")
+            db.prenota_posto_vip(conn,self.get_numero())
             if input("Vuoi aggiungere servizi extra? (ogni servizio costa 20$) s/n ---> ").lower().strip():
                 print("--- Menu Servizi ---")
                 for i, r in enumerate(self.servizi, start=1):
@@ -63,27 +64,36 @@ class PostoVip(Posto):
                         match ch:
                             case 1:
                                 pass
-                                #queri controllo servizio prenotato
-                                #queri setta servizio prenotato
+                                db.verifica_servizio_vip(conn,self.servizi[1])
+                                db.prenota_servizio_vip(conn,self.get_numero(),self.servizi[1])
                                 costa += 20
                             case 2:
                                 pass
-                                #queri controllo servizio prenotato
-                                #queri setta servizio prenotato
+                                db.verifica_servizio_vip(conn,self.servizi[2])
+                                db.prenota_servizio_vip(conn,self.get_numero(),self.servizi[2])
                                 costa += 20
                             case 3:
                                 pass
-                                #queri controllo servizio prenotato
-                                #queri setta servizio prenotato
+                                db.verifica_servizio_vip(conn,self.servizi[3])
+                                db.prenota_servizio_vip(conn,self.get_numero(),self.servizi[3])
                                 costa += 20
+                        print("Servizio prenotato")
                         if input("Vuoi prenotare un altro servizo? s/n ---> ").lower().strip() != "s":
                             break
                     except:
                         print("Errore di inserimento")
-            print(f"Posto prenotato ")
+            
         else:
             print("Posto già prenotato")
-            
+    
+    def libera(self):
+        if self.get_occupato():
+            self.set_occupato(False) 
+            print("Posto liberato")
+            db.cancella_prenotazione_vip(conn,self.get_numero())
+        else:
+            print("Il posto era già libero")
+
 class PostoPlebe(Posto):
     def __init__(self, numero, fila, occupato=False):
         super().__init__(numero, fila, occupato)
@@ -93,7 +103,7 @@ class PostoPlebe(Posto):
             self.set_occupato(True)
             costo = self.calcola_costo()
             print(f"Posto plebe prenotato. Prezzo: {costo}$")
-            # qui puoi aggiungere una "query" per segnare il posto come occupato nel database
+            db.prenota_posto_plebe(conn,self.get_numero())
         else:
             print("Posto già prenotato")
 
@@ -108,3 +118,11 @@ class PostoPlebe(Posto):
         else:
             print("Numero posto non valido (fuori dal range 1-300)")
             return 0.0
+    
+    def libera(self):
+        if self.get_occupato():
+            self.set_occupato(False) 
+            print("Posto liberato")
+            db.cancella_prenotazione_plebe(conn,self.get_numero())
+        else:
+            print("Il posto era già libero")
