@@ -229,69 +229,7 @@ def prenota_servizio_vip(conn, id_posto, servizio):
 
 conn=  connetti_db()
 
-class Teatro:
-    def __init__(self, conn):
-        self.conn = conn
 
-    def menu(self):
-        while True:
-            print("\n🎭 MENU TEATRO")
-            print("1. Visualizza posti plebe disponibili")
-            print("2. Visualizza posti VIP disponibili")
-            print("3. Prenota posto plebe")
-            print("4. Prenota posto VIP")
-            print("5. Cancella prenotazione plebe")
-            print("6. Cancella prenotazione VIP")
-            print("7. Verifica stato servizio VIP")
-            print("8. Prenota servizio VIP")
-            print("9. Esci")
-
-            scelta = input("Seleziona un'opzione: ")
-
-            match scelta:
-                case "1":
-                    posti_disponibili_plebe(self.conn)
-                case "2":
-                    posti_disponibili_vip(self.conn)
-                case "3":
-                    try:
-                        id_posto = int(input("Inserisci ID posto plebe da prenotare: "))
-                        prenota_posto_plebe(self.conn, id_posto)
-                    except ValueError:
-                        print("❌ Inserisci un ID valido.")
-                case "4":
-                    try:
-                        id_posto = int(input("Inserisci ID posto VIP da prenotare: "))
-                        prenota_posto_vip(self.conn, id_posto)
-                    except ValueError:
-                        print("❌ Inserisci un ID valido.")
-                case "5":
-                    try:
-                        id_posto = int(input("Inserisci ID posto plebe da cancellare: "))
-                        cancella_prenotazione_plebe(self.conn, id_posto)
-                    except ValueError:
-                        print("❌ Inserisci un ID valido.")
-                case "6":
-                    try:
-                        id_posto = int(input("Inserisci ID posto VIP da cancellare: "))
-                        cancella_prenotazione_vip(self.conn, id_posto)
-                    except ValueError:
-                        print("❌ Inserisci un ID valido.")
-                case "7":
-                    servizio = input("Inserisci servizio (accesso_lounge, servizio_in_posto, regalo_benvenuto): ").strip()
-                    verifica_servizio_vip(self.conn, servizio)
-                case "8":
-                    try:
-                        id_posto = int(input("Inserisci ID posto VIP: "))
-                        servizio = input("Inserisci servizio da prenotare (accesso_lounge, servizio_in_posto, regalo_benvenuto): ").strip()
-                        prenota_servizio_vip(self.conn, id_posto, servizio)
-                    except ValueError:
-                        print("❌ Inserisci un ID valido.")
-                case "9":
-                    print("👋 Uscita dal programma.")
-                    break
-                case _:
-                    print("❌ Scelta non valida. Riprova.")
                     
 conn=  connetti_db()
 teatro = Teatro(conn)
