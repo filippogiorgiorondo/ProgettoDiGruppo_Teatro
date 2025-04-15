@@ -227,12 +227,5 @@ def prenota_servizio_vip(conn, id_posto, servizio):
 
     cursor.close()
 
-conn=  connetti_db()
 
-
-                    
-conn=  connetti_db()
-teatro = Teatro(conn)
-teatro.menu()
-conn.close()
 
