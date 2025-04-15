@@ -128,9 +128,6 @@ class PostoPlebe(Posto):
             print("Il posto era già libero")
             
 class Teatro:
-    def __init__(self, conn):
-        self.conn = conn
-
     def menu(self):
         while True:
             print("\n🎭 MENU TEATRO")
@@ -148,41 +145,41 @@ class Teatro:
 
             match scelta:
                 case "1":
-                    posti_disponibili_plebe(self.conn)
+                    db.posti_disponibili_plebe(conn)
                 case "2":
-                    posti_disponibili_vip(self.conn)
+                    db.posti_disponibili_vip(conn)
                 case "3":
                     try:
                         id_posto = int(input("Inserisci ID posto plebe da prenotare: "))
-                        prenota_posto_plebe(self.conn, id_posto)
+                        db.prenota_posto_plebe(conn, id_posto)
                     except ValueError:
                         print("❌ Inserisci un ID valido.")
                 case "4":
                     try:
                         id_posto = int(input("Inserisci ID posto VIP da prenotare: "))
-                        prenota_posto_vip(self.conn, id_posto)
+                        db.prenota_posto_vip(conn, id_posto)
                     except ValueError:
                         print("❌ Inserisci un ID valido.")
                 case "5":
                     try:
                         id_posto = int(input("Inserisci ID posto plebe da cancellare: "))
-                        cancella_prenotazione_plebe(self.conn, id_posto)
+                        db.cancella_prenotazione_plebe(conn, id_posto)
                     except ValueError:
                         print("❌ Inserisci un ID valido.")
                 case "6":
                     try:
                         id_posto = int(input("Inserisci ID posto VIP da cancellare: "))
-                        cancella_prenotazione_vip(self.conn, id_posto)
+                        db.cancella_prenotazione_vip(conn, id_posto)
                     except ValueError:
                         print("❌ Inserisci un ID valido.")
                 case "7":
                     servizio = input("Inserisci servizio (accesso_lounge, servizio_in_posto, regalo_benvenuto): ").strip()
-                    verifica_servizio_vip(self.conn, servizio)
+                    db.verifica_servizio_vip(conn, servizio)
                 case "8":
                     try:
                         id_posto = int(input("Inserisci ID posto VIP: "))
                         servizio = input("Inserisci servizio da prenotare (accesso_lounge, servizio_in_posto, regalo_benvenuto): ").strip()
-                        prenota_servizio_vip(self.conn, id_posto, servizio)
+                        db.prenota_servizio_vip(conn, id_posto, servizio)
                     except ValueError:
                         print("❌ Inserisci un ID valido.")
                 case "9":
