@@ -86,48 +86,48 @@ def posti_disponibili_vip(conn):
     cursor.close()
 
 # === FUNZIONE PER PRENOTARE UN POSTO PLEBE ===
-def prenota_posto_plebe(conn):
+def prenota_posto_plebe(conn, posto_id):
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT id, fila FROM PostiPlebe
-        WHERE occupato = FALSE
-        LIMIT 1
-    """)
+        SELECT id FROM PostiPlebe
+        WHERE id = %s AND occupato = FALSE
+    """, (posto_id,))
     posto = cursor.fetchone()
 
     if posto:
         cursor.execute("UPDATE PostiPlebe SET occupato = TRUE WHERE id = %s", (posto[0],))
         conn.commit()
-        print(f"🎟️ Posto plebe prenotato: ID {posto[0]}, fila {posto[1]}")
+        print(f"🎟️ Posto plebe prenotato: ID {posto[0]}")
         cursor.close()
         return posto
     else:
-        print("❌ Nessun posto plebe disponibile.")
+        print("❌ Il posto plebe richiesto non è disponibile.")
         cursor.close()
         return None
 
-# === FUNZIONE PER PRENOTARE UN POSTO VIP
-def prenota_posto_vip(conn):
+
+# === FUNZIONE PER PRENOTARE UN POSTO VIPs
+def prenota_posto_vip(conn, posto_id):
     cursor = conn.cursor()
 
     cursor.execute("""
-        SELECT id, fila FROM Postivip
-        WHERE occupato = FALSE
-        LIMIT 1
-    """)
+        SELECT id FROM Postivip
+        WHERE id = %s AND occupato = FALSE
+    """, (posto_id,))
     posto = cursor.fetchone()
 
     if posto:
         cursor.execute("UPDATE Postivip SET occupato = TRUE WHERE id = %s", (posto[0],))
         conn.commit()
-        print(f"🎟️ Posto vip prenotato: ID {posto[0]}, fila {posto[1]}")
+        print(f"🎟️ Posto vip prenotato: ID {posto[0]}")
         cursor.close()
         return posto
     else:
-        print("❌ Nessun posto vip disponibile.")
+        print("❌ Il posto vip richiesto non è disponibile.")
         cursor.close()
         return None
+
     
 # ===  CANCELLA POSTI PLEBE ===
 def cancella_prenotazione_plebe(conn, id_posto):
@@ -227,5 +227,57 @@ def prenota_servizio_vip(conn, id_posto, servizio):
 
     cursor.close()
 
-
 conn=  connetti_db()
+
+def menu(conn):
+    while True:
+        print("\n--- MENU ---")
+        print("1. Visualizza posti disponibili plebe")
+        print("2. Visualizza posti disponibili VIP")
+        print("3. Prenota posto plebe")
+        print("4. Prenota posto VIP")
+        print("5. Cancella prenotazione posto plebe")
+        print("6. Cancella prenotazione posto VIP")
+        print("7. Verifica stato di un servizio VIP")
+        print("8. Prenota un servizio VIP")
+        print("9. Esci")
+
+        scelta = input("Scegli un'opzione: ")
+
+        match scelta:
+            case "1":
+                posti_disponibili_plebe(conn)
+
+            case "2":
+                posti_disponibili_vip(conn)
+
+            case "3":
+                prenota_posto_plebe(conn)
+
+            case "4":
+                prenota_posto_vip(conn)
+
+            case "5":
+                id_posto = int(input("Inserisci l'ID del posto plebe da cancellare: "))
+                cancella_prenotazione_plebe(conn, id_posto)
+
+            case "6":
+                id_posto = int(input("Inserisci l'ID del posto VIP da cancellare: "))
+                cancella_prenotazione_vip(conn, id_posto)
+
+            case "7":
+                servizio = input("Inserisci il servizio da verificare (accesso_lounge, servizio_in_posto, regalo_benvenuto): ")
+                verifica_servizio_vip(conn, servizio)
+
+            case "8":
+                id_posto = int(input("Inserisci l'ID del posto VIP per prenotare il servizio: "))
+                servizio = input("Inserisci il servizio da prenotare (accesso_lounge, servizio_in_posto, regalo_benvenuto): ")
+                prenota_servizio_vip(conn, id_posto, servizio)
+
+            case "9":
+                print("Arrivederci!")
+                break
+
+            case _:
+                print("❌ Opzione non valida. Riprova.")
+
