@@ -1,7 +1,7 @@
-# 🎭 Sistema Prenotazione Teatro
+# 🎭 Sistema Gestione Teatro
 *Un’esperienza teatrale a portata di CLI*
 
-Benvenuto nel Sistema di Prenotazione Teatro, una piattaforma Python con MySQL progettata per offrire una gestione moderna, efficiente e interattiva dei posti a teatro.
+Benvenuto nel Sistema di gestione Teatro, una piattaforma Python con MySQL progettata per offrire una gestione moderna, efficiente e interattiva dei posti a teatro.
 Grazie a un menu guidato e semplice da usare, il sistema consente agli utenti di prenotare, cancellare o arricchire l’esperienza dei posti VIP con servizi esclusivi.
 
 Questo progetto è pensato per simulare in tempo reale la gestione di un teatro tramite interfaccia testuale. È sviluppato in Python 3.x e utilizza un database relazionale MySQL per la gestione persistente dei dati.
