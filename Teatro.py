@@ -1,4 +1,4 @@
-import funzionidb as db
+import TeatroDB as db
 import time
 conn = db.connetti_db()
 db.crea_e_popola_tabelle(conn)
