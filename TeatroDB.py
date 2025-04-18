@@ -1,8 +1,11 @@
+from contextlib import contextmanager
 import mysql.connector
 from mysql.connector import Error
 
-# === CONNESSIONE AL DATABASE ===
+# Usiamo on context manager, e usiamo yield. Molto utile successivamente nell'utilizzo della connesione
+@contextmanager
 def connetti_db():
+    conn = None
     try:
         conn = mysql.connector.connect(
             host="localhost",
@@ -12,58 +15,69 @@ def connetti_db():
         )
         if conn.is_connected():
             print("✅ Connessione al database riuscita.")
-            return conn
+            yield conn
+        else:
+            yield None
     except Error as e:
         print(f"❌ Errore di connessione al database: {e}")
-    return None
+        yield None
+    finally:
+        if conn and conn.is_connected():
+            conn.close()
+            print("🔌 Connessione al database chiusa.")
 
 
-# === CREAZIONE E POPOLAMENTO DELLE TABELLE ===
-def crea_e_popola_tabelle(conn):
-    cursor = conn.cursor()
 
-    # Creazione database se non esiste
-    cursor.execute("CREATE DATABASE IF NOT EXISTS Teatro")
-    cursor.execute("USE Teatro")
+# Ad esempio ora non dobbiamo piu' passare la connessione come parametro ma
+# Possiamo usare il context manager sopra indicato
+def crea_e_popola_tabelle():
+    with connetti_db() as conn:
+        if conn:
+            cursor = conn.cursor()
 
-    # Tabella PostiPlebe
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS PostiPlebe (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            fila CHAR(1) NOT NULL,
-            occupato BOOLEAN DEFAULT FALSE,
-            nome_prenotazione VARCHAR(255) DEFAULT NULL,
-            importo FLOAT DEFAULT NULL
-        )
-    """)
+            # Creazione database se non esiste
+            cursor.execute("CREATE DATABASE IF NOT EXISTS Teatro")
+            cursor.execute("USE Teatro")
 
-    lettere_fila_plebe = ['M', 'B']
-    for i in range(20):
-        fila = lettere_fila_plebe[i // 10]
-        cursor.execute("INSERT INTO PostiPlebe (fila) VALUES (%s)", (fila,))
+            # Tabella PostiPlebe
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS PostiPlebe (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    fila CHAR(1) NOT NULL,
+                    occupato BOOLEAN DEFAULT FALSE,
+                    nome_prenotazione VARCHAR(255) DEFAULT NULL,
+                    importo FLOAT DEFAULT NULL
+                )
+            """)
 
-    # Tabella PostiVIP
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS PostiVIP (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            fila CHAR(1) NOT NULL,
-            occupato BOOLEAN DEFAULT FALSE,
-            accesso_lounge BOOLEAN DEFAULT FALSE,
-            servizio_in_posto BOOLEAN DEFAULT FALSE,
-            regalo_benvenuto BOOLEAN DEFAULT FALSE,
-            nome_prenotazione VARCHAR(255) DEFAULT NULL,
-            importo FLOAT DEFAULT NULL
-        )
-    """)
+            lettere_fila_plebe = ['M', 'B']
+            for i in range(20):
+                fila = lettere_fila_plebe[i // 10]
+                cursor.execute("INSERT INTO PostiPlebe (fila) VALUES (%s)", (fila,))
 
-    for _ in range(10):
-        cursor.execute("""
-            INSERT INTO PostiVIP (fila, accesso_lounge, servizio_in_posto, regalo_benvenuto)
-            VALUES (%s, %s, %s, %s)
-        """, ('V', False, False, False))
+            # Tabella PostiVIP
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS PostiVIP (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    fila CHAR(1) NOT NULL,
+                    occupato BOOLEAN DEFAULT FALSE,
+                    accesso_lounge BOOLEAN DEFAULT FALSE,
+                    servizio_in_posto BOOLEAN DEFAULT FALSE,
+                    regalo_benvenuto BOOLEAN DEFAULT FALSE,
+                    nome_prenotazione VARCHAR(255) DEFAULT NULL,
+                    importo FLOAT DEFAULT NULL
+                )
+            """)
 
-    conn.commit()
-    cursor.close()
+            for _ in range(10):
+                cursor.execute("""
+                    INSERT INTO PostiVIP (fila, accesso_lounge, servizio_in_posto, regalo_benvenuto)
+                    VALUES (%s, %s, %s, %s)
+                """, ('V', False, False, False))
+
+            conn.commit()
+    # Essendo che siamo in un context manager, possiamo evitare il cursor.close ogni volta, poiche' e' il context manager che automaticamente lo fa 
+    # cursor.close()
     print("✅ Tabelle create e popolate con successo.")
 
 
